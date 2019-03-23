@@ -1,0 +1,5 @@
+main: net.myplayplanet.tutorial.Tutorial
+name: Tutorial
+version: 1.0
+api-version: 1.13
+author: Seliba
