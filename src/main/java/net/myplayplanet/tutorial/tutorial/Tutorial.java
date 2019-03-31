@@ -9,7 +9,7 @@ public class Tutorial {
   private TutorialType type;
   private LinkedList<TutorialData> data;
 
-  private Tutorial(String name, TutorialType tutorialType, LinkedList<TutorialData> data) {
+  Tutorial(String name, TutorialType tutorialType, LinkedList<TutorialData> data) {
 
     this.name = name;
     this.type = tutorialType;

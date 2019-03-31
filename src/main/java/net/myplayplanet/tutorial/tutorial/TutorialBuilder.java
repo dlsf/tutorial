@@ -36,9 +36,9 @@ public class TutorialBuilder {
 
     Objects.requireNonNull(name);
     Objects.requireNonNull(type);
-    Objects.requireNonNull(data);
+    data = data == null ? new LinkedList<>() : data;
 
-    return new Tutorial();
+    return new Tutorial(name, type, data);
 
   }
 

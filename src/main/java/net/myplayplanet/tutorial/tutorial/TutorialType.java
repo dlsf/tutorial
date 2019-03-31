@@ -9,7 +9,13 @@ public enum TutorialType {
   private String name;
 
   TutorialType(String name) {
+
     this.name = name;
+
+  }
+
+  public String getName() {
+    return name;
   }
 
 }
