@@ -14,7 +14,7 @@ public class TutorialHelpCommand {
     commandSender.sendMessage("§7----------[§6Tutorials§7]----------");
     commandSender.sendMessage("§7/tutorial help §f| §6Zeigt diese Nachricht an");
     commandSender.sendMessage("§7/tutorial create <Name> §f| §6Erstellt ein Tutorial");
-    commandSender.sendMessage("§7/tutorial manage <Name> §f| §6Verwaltet ein Tutorial");
+    commandSender.sendMessage("§7/tutorial modify <Name> §f| §6Verwaltet ein Tutorial");
     commandSender.sendMessage("§7/tutorial list §f| §6Zeigt alle Tutorials an");
 
   }

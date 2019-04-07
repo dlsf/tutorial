@@ -1,7 +1,7 @@
 package net.myplayplanet.tutorial.tutorial;
 
 import net.myplayplanet.core.platform.bukkit.util.InventoryAPI;
-import net.myplayplanet.tutorial.daos.TutorialDao;
+import net.myplayplanet.tutorial.dao.TutorialDao;
 import org.bukkit.entity.Player;
 
 public class TutorialModifier {
@@ -16,7 +16,7 @@ public class TutorialModifier {
 
   }
 
-  public static void openModifyInventory(Player player, Tutorial tutorial) {
+  public void openModifyInventory(Player player, Tutorial tutorial) {
 
     //TODO
 

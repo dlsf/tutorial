@@ -17,4 +17,16 @@ public class Tutorial {
 
   }
 
+  public String getName() {
+    return name;
+  }
+
+  public TutorialType getType() {
+    return type;
+  }
+
+  public LinkedList<TutorialData> getData() {
+    return data;
+  }
+
 }

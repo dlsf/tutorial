@@ -1,6 +1,6 @@
 package net.myplayplanet.tutorial.tutorial;
 
-import net.myplayplanet.tutorial.daos.TutorialDao;
+import net.myplayplanet.tutorial.dao.TutorialDao;
 
 public class TutorialCreator {
 
@@ -12,10 +12,10 @@ public class TutorialCreator {
 
   }
 
-  public static Tutorial createTutorial(String name, TutorialType type) {
+  public Tutorial createTutorial(String name, TutorialType type) {
 
-    //TODO
-    return new TutorialBuilder().setName(name).setType(type).build();
+    tutorialDao.createTutorial(name, type);
+    return tutorialDao.loadTutorial(name);
 
   }
 
