@@ -9,8 +9,7 @@ public class NpcRightClickListener implements Listener {
   @EventHandler
   public void onNpcRightClick(NPCRightClickEvent event) {
 
-    //TODO: Change name
-    if (!event.getNPC().getName().equalsIgnoreCase("Tom")) {
+    if (!event.getNPC().getName().equalsIgnoreCase("Tutorial")) {
       return;
     }
 

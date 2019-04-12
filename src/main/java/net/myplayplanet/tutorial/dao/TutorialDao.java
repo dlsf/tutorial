@@ -12,12 +12,12 @@ import net.myplayplanet.tutorial.tutorial.data.TutorialData;
 public class TutorialDao {
 
   private Config config;
-  private List<Tutorial> tutorialList;
+  private static List<Tutorial> tutorialList;
 
   public TutorialDao(Config config, List<Tutorial> tutorialList) {
 
     this.config = config;
-    this.tutorialList = tutorialList;
+    TutorialDao.tutorialList = tutorialList;
 
   }
 

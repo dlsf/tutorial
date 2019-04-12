@@ -48,16 +48,22 @@ public class TutorialCreateCommand {
     inventoryBuilder.add(new InventoryItem((consumerPlayer, itemStack) -> {
       player.closeInventory();
       tutorialCreator.createTutorial(name, TutorialType.VIDEO);
+      consumerPlayer.sendMessage("§aDu hast das Tutorial erfolgreich erstellt!");
+      consumerPlayer.sendMessage("§aBearbeite das Tutorial mit §6/tutorial modify <Name>§a!");
     }, new ItemStackBuilder(TutorialType.VIDEO.getMaterial())
         .name("§a" + TutorialType.VIDEO.getName()).lore(TutorialType.VIDEO.getLore()).build()), 11);
     inventoryBuilder.add(new InventoryItem((consumerPlayer, itemStack) -> {
       player.closeInventory();
       tutorialCreator.createTutorial(name, TutorialType.FORUM);
+      consumerPlayer.sendMessage("§aDu hast das Tutorial erfolgreich erstellt!");
+      consumerPlayer.sendMessage("§aBearbeite das Tutorial mit §6/tutorial modify <Name>§a!");
     }, new ItemStackBuilder(TutorialType.FORUM.getMaterial())
         .name("§a" + TutorialType.FORUM.getName()).lore(TutorialType.FORUM.getLore()).build()), 13);
     inventoryBuilder.add(new InventoryItem((consumerPlayer, itemStack) -> {
           player.closeInventory();
           tutorialCreator.createTutorial(name, TutorialType.INGAME);
+          consumerPlayer.sendMessage("§aDu hast das Tutorial erfolgreich erstellt!");
+          consumerPlayer.sendMessage("§aBearbeite das Tutorial mit §6/tutorial modify <Name>§a!");
         }, new ItemStackBuilder(TutorialType.INGAME.getMaterial())
             .name("§a" + TutorialType.INGAME.getName()).lore(TutorialType.INGAME.getLore()).build()),
         15);

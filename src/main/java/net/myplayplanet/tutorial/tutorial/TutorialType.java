@@ -4,8 +4,8 @@ import org.bukkit.Material;
 
 public enum TutorialType {
 
-  VIDEO("Video", Material.RED_WOOL, "§6Ein Tutorial in Form eines Links\n§6zu einem Video"),
-  FORUM("Forum", Material.BLUE_WOOL, "§6Ein Tutorial in Form eines Links\n§6zu einem Forumbeitrag"),
+  VIDEO("Video", Material.RED_WOOL, "§6Ein Tutorial in Form eines Videos"),
+  FORUM("Forum", Material.BLUE_WOOL, "§6Ein Tutorial in Form eines Forumbeitrags"),
   INGAME("Ingame", Material.GRASS_BLOCK, "§6Ein Tutorial in Form eines Ingame-Tutorials");
 
   private String name;
