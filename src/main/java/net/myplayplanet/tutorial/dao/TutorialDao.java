@@ -8,6 +8,7 @@ import net.myplayplanet.tutorial.tutorial.TutorialType;
 import net.myplayplanet.tutorial.tutorial.data.IngameData;
 import net.myplayplanet.tutorial.tutorial.data.TextData;
 import net.myplayplanet.tutorial.tutorial.data.TutorialData;
+import org.bukkit.Location;
 
 public class TutorialDao {
 
@@ -78,19 +79,22 @@ public class TutorialDao {
 
   public void removeTutorialData(String name, int id) {
 
-    config.set(name + "." + id + ".message", null);
-    config.set(name + "." + id + ".location.world", null);
-    config.set(name + "." + id + ".location.x", null);
-    config.set(name + "." + id + ".location.y", null);
-    config.set(name + "." + id + ".location.z", null);
-    config.set(name + "." + id + ".location.yaw", null);
-    config.set(name + "." + id + ".location.pitch", null);
+    if (TutorialType.valueOf(config.getString(name + ".type")) != TutorialType.INGAME) {
+      config.set(name + "." + id + ".message", null);
+    } else {
+      for (int i = id; i < getTutorialDataAmount(name); i++) {
+        config
+            .set(name + "." + i + ".message", config.getString(name + "." + (i + 1) + ".message"));
+        config.set(name + "." + i + ".location",
+            config.getLocation(name + "." + (i + 1) + ".location"));
+      }
+    }
     config.set(name + ".data-amount", getTutorialDataAmount(name) - 1);
     config.save();
 
   }
 
-  public List<String> getTutorialNames() {
+  private List<String> getTutorialNames() {
 
     return config.getStringList("tutorial-names");
 
@@ -105,6 +109,18 @@ public class TutorialDao {
   private int getTutorialDataAmount(String name) {
 
     return config.getInt(name + ".data-amount");
+
+  }
+
+  public void changeMessage(TutorialData tutorialData, String message) {
+
+    //TODO
+
+  }
+
+  public void changeLocation(TutorialData tutorialData, Location location) {
+
+    //TODO
 
   }
 

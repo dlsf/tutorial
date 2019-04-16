@@ -11,12 +11,14 @@ import net.myplayplanet.tutorial.commands.TutorialListCommand;
 import net.myplayplanet.tutorial.commands.TutorialModifyCommand;
 import net.myplayplanet.tutorial.config.Config;
 import net.myplayplanet.tutorial.dao.TutorialDao;
+import net.myplayplanet.tutorial.listener.AsyncPlayerChatListener;
 import net.myplayplanet.tutorial.listener.NpcRightClickListener;
 import net.myplayplanet.tutorial.listener.PlayerToggleSneakListener;
 import net.myplayplanet.tutorial.tutorial.TutorialCreator;
 import net.myplayplanet.tutorial.tutorial.TutorialManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Tutorial extends JavaPlugin {
@@ -68,9 +70,11 @@ public class Tutorial extends JavaPlugin {
 
   private void registerListener() {
 
-    Bukkit.getPluginManager().registerEvents(new NpcRightClickListener(), this);
-    Bukkit.getPluginManager().registerEvents(
+    PluginManager pluginManager = Bukkit.getPluginManager();
+    pluginManager.registerEvents(new NpcRightClickListener(), this);
+    pluginManager.registerEvents(
         new PlayerToggleSneakListener(tutorialManager, currentTutorial, currentPosition), this);
+    pluginManager.registerEvents(new AsyncPlayerChatListener(tutorialDao), this);
 
   }
 

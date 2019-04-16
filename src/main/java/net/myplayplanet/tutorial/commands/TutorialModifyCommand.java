@@ -9,11 +9,14 @@ import net.myplayplanet.core.platform.bukkit.util.InventoryBuilder;
 import net.myplayplanet.core.platform.bukkit.util.InventoryItem;
 import net.myplayplanet.core.platform.bukkit.util.ItemStackBuilder;
 import net.myplayplanet.tutorial.dao.TutorialDao;
+import net.myplayplanet.tutorial.listener.AsyncPlayerChatListener;
 import net.myplayplanet.tutorial.tutorial.Tutorial;
 import net.myplayplanet.tutorial.tutorial.TutorialManager;
+import net.myplayplanet.tutorial.tutorial.TutorialType;
+import net.myplayplanet.tutorial.tutorial.data.IngameData;
+import net.myplayplanet.tutorial.tutorial.data.TutorialData;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class TutorialModifyCommand {
 
@@ -61,36 +64,52 @@ public class TutorialModifyCommand {
     InventoryBuilder inventoryBuilder = new InventoryBuilder(inventoryAPI,
         "§aTutorials §f| §a" + tutorial.getName(), INVENTORY_SIZE);
 
-    inventoryBuilder.add(new InventoryItem(this::openAddDataInventory,
-        new ItemStackBuilder(Material.GREEN_CONCRETE_POWDER).name("§6Tutorial-Daten hinzufügen")
-            .lore("§aErstellt neue Tutorial-Daten").lore("§ades Tutorials an").build()), 11);
     inventoryBuilder.add(new InventoryItem(
-        (consumerPlayer, itemStack) -> openShowDataInventory(consumerPlayer, itemStack,
-            tutorial.getName()),
-        new ItemStackBuilder(Material.PAPER).name("§6Tutorial-Daten anzeigen")
-            .lore("§aZeigt alle Tutorial-Daten").lore("§ades Tutorials an").build()), 13);
-    inventoryBuilder.add(new InventoryItem(this::openRemoveTutorialInventory,
-        new ItemStackBuilder(Material.REDSTONE_BLOCK).name("§6Tutorial löschen")
-            .lore("§aLöscht das Tutorial").build()), 15);
+        ((player1, itemStack) -> addData(player1, tutorial)),
+        new ItemStackBuilder(Material.GREEN_CONCRETE_POWDER).name("§6Tutorial-Daten hinzufügen")
+            .lore("§aErstellt neue Tutorial-Daten")
+            .lore("§ades Tutorials an")
+            .build()), 11);
+    inventoryBuilder.add(new InventoryItem(
+        (consumerPlayer, itemStack) -> openShowDataInventory(consumerPlayer, tutorial.getName()),
+        new ItemStackBuilder(Material.PAPER)
+            .name("§6Tutorial-Daten anzeigen")
+            .lore("§aZeigt alle Tutorial-Daten")
+            .lore("§ades Tutorials an")
+            .build()), 13);
+    inventoryBuilder.add(new InventoryItem(
+        (player1, itemStack1) -> openRemoveTutorialInventory(player1, tutorial),
+        new ItemStackBuilder(Material.REDSTONE_BLOCK)
+            .name("§6Tutorial löschen")
+            .lore("§aLöscht das Tutorial")
+            .build()), 15);
 
     inventoryBuilder.save();
     inventoryBuilder.open(player);
 
   }
 
-  private void openAddDataInventory(Player player, ItemStack itemStack) {
+  private void addData(Player player, Tutorial tutorial) {
 
-    //TODO
+    if (tutorial.getType() == TutorialType.INGAME) {
+      AsyncPlayerChatListener.registerAddPlayerListener(player, tutorial);
+      player.closeInventory();
+      player.sendMessage(
+          "§aBitte stelle dich auf die Location und gebe die Chatnachricht in den Chat ein!");
+    } else if (tutorial.getData().isEmpty()) {
+      AsyncPlayerChatListener.registerAddPlayerListener(player, tutorial);
+      player.closeInventory();
+      player.sendMessage("§aBitte gebe die Nachricht ein, die man erhalten soll!");
+    } else {
+      player.closeInventory();
+      player.sendMessage("§cDas Tutorial wurde bereits fertig konfiguriert!");
+    }
 
   }
 
-  private void openShowDataInventory(Player player, ItemStack itemStack, String tutorialName) {
+  private void openShowDataInventory(Player player, String tutorialName) {
 
     Tutorial currentTutorial = tutorialManager.getTutorialByName(tutorialName);
-    InventoryPageHolder holder = new InventoryPageHolder(inventoryAPI,
-        new ItemStackBuilder(Material.ARROW).name("§6Vorherige Seite").build(),
-        new ItemStackBuilder(
-            Material.ARROW).name("§6Nächste Seite").build(), 0, INVENTORY_SIZE);
 
     if (currentTutorial == null || currentTutorial.getData() == null || currentTutorial.getData()
         .isEmpty()) {
@@ -100,11 +119,18 @@ public class TutorialModifyCommand {
       return;
     }
 
-    for (int i = 0; i < currentTutorial.getData().size(); i++) {
-      holder.addItems(new InventoryItem((consumerPlayer2, itemStack2) -> {
+    InventoryPageHolder holder = new InventoryPageHolder(inventoryAPI,
+        new ItemStackBuilder(Material.ARROW).name("§6Vorherige Seite").build(),
+        new ItemStackBuilder(
+            Material.ARROW).name("§6Nächste Seite").build(), 0, INVENTORY_SIZE);
 
-      }, new ItemStackBuilder(Material.PAPER).name("§a" + i)
-          .lore("§6Message: §a" + currentTutorial.getData().get(i).getMessage()).build()));
+    for (int i = 0; i < currentTutorial.getData().size(); i++) {
+      TutorialData currentData = currentTutorial.getData().get(i);
+      holder.addItems(new InventoryItem((consumerPlayer2, itemStack2) ->
+          openSpecialDataModifyTutorial(consumerPlayer2,
+              tutorialManager.getTutorialByName(tutorialName), currentData)
+          , new ItemStackBuilder(Material.PAPER).name("§a" + i)
+          .lore("§6Message: §a" + currentData.getMessage()).build()));
     }
 
     holder.createAndInitPages("§a" + currentTutorial.getName() + " §f| §aDaten");
@@ -112,7 +138,7 @@ public class TutorialModifyCommand {
 
   }
 
-  private void openRemoveTutorialInventory(Player consumerPlayer, ItemStack itemStack) {
+  private void openRemoveTutorialInventory(Player consumerPlayer, Tutorial tutorial) {
 
     if (!consumerPlayer.hasPermission("tutorial.delete")) {
       consumerPlayer.closeInventory();
@@ -123,13 +149,11 @@ public class TutorialModifyCommand {
     consumerPlayer.closeInventory();
 
     InventoryBuilder deleteInventoryBuilder = new InventoryBuilder(inventoryAPI,
-        "§aTutorial " + itemStack.getItemMeta().getDisplayName() + " §alöschen?", INVENTORY_SIZE);
+        "§aTutorial löschen?", INVENTORY_SIZE);
     deleteInventoryBuilder.add(new InventoryItem((consumerPlayer2, itemStack2) -> {
-      Tutorial currentTutorial = tutorialManager
-          .getTutorialByName(itemStack2.getItemMeta().getDisplayName().replaceAll("§a", ""));
 
-      tutorialDao.removeTutorial(currentTutorial.getName());
-      tutorialList.remove(currentTutorial);
+      tutorialDao.removeTutorial(tutorial.getName());
+      tutorialList.remove(tutorial);
       consumerPlayer2.closeInventory();
       consumerPlayer2.sendMessage("§aDas Tutorial wurde erfolgreich gelöscht!");
     }, new ItemStackBuilder(Material.EMERALD_BLOCK).name("§cLöschen").build()), 11);
@@ -140,6 +164,50 @@ public class TutorialModifyCommand {
 
     deleteInventoryBuilder.save();
     deleteInventoryBuilder.open(consumerPlayer);
+
+  }
+
+  private void openSpecialDataModifyTutorial(Player player, Tutorial tutorial,
+      TutorialData tutorialData) {
+
+    InventoryBuilder inventoryBuilder = new InventoryBuilder(inventoryAPI,
+        "§aDaten §f| §aVerwaltung", INVENTORY_SIZE);
+
+    inventoryBuilder.add(new InventoryItem((player1, itemStack1) -> {
+      player1.closeInventory();
+      player1.sendMessage("§aBitte gebe die neue Nachricht in den Chat ein!");
+      AsyncPlayerChatListener.registerChangePlayerListener(player1, tutorialData);
+    }, new ItemStackBuilder(Material.PAPER).name("§6Nachricht ändern").build()), 11);
+
+    if (tutorialData instanceof IngameData) {
+      inventoryBuilder.add(new InventoryItem((player1, itemStack1) -> {
+        player1.closeInventory();
+        player1.sendMessage(
+            "§aBitte stelle dich auf die neue Location und gebe die neue Chatnachricht in den Chat ein!");
+        AsyncPlayerChatListener.registerChangePlayerListener(player1, tutorialData);
+      }, new ItemStackBuilder(Material.GRASS_BLOCK).name("§6Ort + Nachricht ändern").build()), 13);
+    }
+
+    inventoryBuilder.add(new InventoryItem((player1, itemStack1) -> {
+      InventoryBuilder deleteInventoryBuilder = new InventoryBuilder(inventoryAPI,
+          "§aTutorialdaten löschen?", INVENTORY_SIZE);
+      deleteInventoryBuilder.add(new InventoryItem((consumerPlayer2, itemStack2) -> {
+        tutorialDao
+            .removeTutorialData(tutorial.getName(), tutorial.getData().indexOf(tutorialData));
+        consumerPlayer2.sendMessage("§aDie Daten wurden erfolgreich gelöscht!");
+      }, new ItemStackBuilder(Material.EMERALD_BLOCK).name("§cLöschen").build()), 11);
+      deleteInventoryBuilder.add(new InventoryItem((consumerPlayer2, itemStack2) -> {
+        consumerPlayer2.closeInventory();
+        consumerPlayer2.sendMessage("§cDu hast den Vorgang abgebrochen!");
+      }, new ItemStackBuilder(Material.REDSTONE_BLOCK).name("§cNicht löschen").build()), 15);
+
+      deleteInventoryBuilder.save();
+      deleteInventoryBuilder.open(player1);
+    }, new ItemStackBuilder(Material.REDSTONE_BLOCK).name("§6Daten löschen")
+        .lore("§aLöscht alle Daten für diesen Punkt!").build()), 15);
+
+    inventoryBuilder.save();
+    inventoryBuilder.open(player);
 
   }
 

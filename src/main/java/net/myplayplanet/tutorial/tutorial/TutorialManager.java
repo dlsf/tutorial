@@ -29,7 +29,7 @@ public class TutorialManager {
 
   }
 
-  public net.myplayplanet.tutorial.tutorial.Tutorial getTutorialByName(String name) {
+  public Tutorial getTutorialByName(String name) {
 
     return tutorialList.stream()
         .filter(tutorial -> tutorial.getName().equals(name))
