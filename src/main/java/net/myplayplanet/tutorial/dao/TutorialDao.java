@@ -1,6 +1,7 @@
 package net.myplayplanet.tutorial.dao;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import net.myplayplanet.tutorial.config.Config;
 import net.myplayplanet.tutorial.tutorial.Tutorial;
 import net.myplayplanet.tutorial.tutorial.TutorialBuilder;
@@ -108,19 +109,36 @@ public class TutorialDao {
 
   private int getTutorialDataAmount(String name) {
 
-    return config.getInt(name + ".data-amount");
+    return config.get(name + ".data-amount") == null ? 0 : config.getInt(name + ".data-amount");
 
   }
 
   public void changeMessage(TutorialData tutorialData, String message) {
 
-    //TODO
+    Tutorial tutorial = getTutorialByData(tutorialData);
+
+    config.set(tutorial.getName() + "." + tutorial.getData().indexOf(tutorialData) + ".message",
+        message);
+    config.save();
 
   }
 
   public void changeLocation(TutorialData tutorialData, Location location) {
 
-    //TODO
+    Tutorial tutorial = getTutorialByData(tutorialData);
+
+    config.set(tutorial.getName() + "." + tutorial.getData().indexOf(tutorialData) + ".location",
+        location);
+    config.save();
+
+  }
+
+  private Tutorial getTutorialByData(TutorialData tutorialData) {
+
+    return tutorialList.stream()
+        .filter(tutorial -> tutorial.getData().contains(tutorialData))
+        .findFirst()
+        .orElseThrow(NoSuchElementException::new);
 
   }
 

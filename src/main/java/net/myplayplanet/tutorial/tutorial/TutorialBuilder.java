@@ -9,7 +9,7 @@ public class TutorialBuilder {
 
   private String name;
   private TutorialType type;
-  private LinkedList<TutorialData> data;
+  private LinkedList<TutorialData> data = new LinkedList<>();
 
   public TutorialBuilder setName(String name) {
 
@@ -26,7 +26,7 @@ public class TutorialBuilder {
   }
 
   public TutorialBuilder addTutorialData(TutorialData... data) {
-
+    
     this.data.addAll(Arrays.asList(data));
     return this;
 

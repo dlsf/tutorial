@@ -52,9 +52,11 @@ public class TutorialManager {
       IngameData ingameData = (IngameData) tutorial.getData().get(0);
       player.sendMessage(ChatColor.translateAlternateColorCodes('&', ingameData.getMessage()));
       player.teleport(ingameData.getLocation());
+      player.sendMessage("1");
     } else {
       player.sendMessage(
           ChatColor.translateAlternateColorCodes('&', tutorial.getData().getFirst().getMessage()));
+      player.sendMessage("2");
     }
 
   }

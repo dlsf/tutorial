@@ -69,10 +69,11 @@ public class TutorialListCommand {
 
     tutorialList.forEach(tutorial -> {
       if (tutorial.getType() == TutorialType.VIDEO) {
-        holder.addItems(new InventoryItem((player1, itemStack) ->
-            tutorialManager.startTutorial(player1, tutorialManager
-                .getTutorialByName(itemStack.getItemMeta().getDisplayName().replaceAll("§a", "")))
-            , new ItemStackBuilder(TutorialType.VIDEO.getMaterial()).name("§a" + tutorial.getName())
+        holder.addItems(new InventoryItem((player1, itemStack) -> {
+          player1.closeInventory();
+          tutorialManager.startTutorial(player1, tutorialManager
+              .getTutorialByName(itemStack.getItemMeta().getDisplayName().replaceAll("§a", "")));
+        }, new ItemStackBuilder(TutorialType.VIDEO.getMaterial()).name("§a" + tutorial.getName())
             .build()));
       }
     });
@@ -91,10 +92,11 @@ public class TutorialListCommand {
 
     tutorialList.forEach(tutorial -> {
       if (tutorial.getType() == TutorialType.FORUM) {
-        holder.addItems(new InventoryItem((player1, itemStack) ->
+        holder.addItems(new InventoryItem((player1, itemStack) -> {
+          player1.closeInventory();
             tutorialManager.startTutorial(player1, tutorialManager
-                .getTutorialByName(itemStack.getItemMeta().getDisplayName().replaceAll("§a", "")))
-            , new ItemStackBuilder(TutorialType.FORUM.getMaterial()).name("§a" + tutorial.getName())
+                .getTutorialByName(itemStack.getItemMeta().getDisplayName().replaceAll("§a", "")));
+        }, new ItemStackBuilder(TutorialType.FORUM.getMaterial()).name("§a" + tutorial.getName())
             .build()));
       }
     });
@@ -113,10 +115,11 @@ public class TutorialListCommand {
 
     tutorialList.forEach(tutorial -> {
       if (tutorial.getType() == TutorialType.INGAME) {
-        holder.addItems(new InventoryItem((player1, itemStack) ->
-            tutorialManager.startTutorial(player1, tutorialManager
-                .getTutorialByName(itemStack.getItemMeta().getDisplayName().replaceAll("§a", "")))
-            ,
+        holder.addItems(new InventoryItem((player1, itemStack) -> {
+          player1.closeInventory();
+          tutorialManager.startTutorial(player1, tutorialManager
+              .getTutorialByName(itemStack.getItemMeta().getDisplayName().replaceAll("§a", "")));
+        },
             new ItemStackBuilder(TutorialType.INGAME.getMaterial()).name("§a" + tutorial.getName())
                 .build()));
       }

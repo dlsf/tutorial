@@ -3,7 +3,9 @@ package net.myplayplanet.tutorial.listener;
 import java.util.HashMap;
 import net.myplayplanet.tutorial.dao.TutorialDao;
 import net.myplayplanet.tutorial.tutorial.Tutorial;
+import net.myplayplanet.tutorial.tutorial.TutorialType;
 import net.myplayplanet.tutorial.tutorial.data.IngameData;
+import net.myplayplanet.tutorial.tutorial.data.TextData;
 import net.myplayplanet.tutorial.tutorial.data.TutorialData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,6 +46,8 @@ public class AsyncPlayerChatListener implements Listener {
 
     if (changePlayerListener.containsKey(player)) {
 
+      event.setCancelled(true);
+
       TutorialData tutorialData = changePlayerListener.get(player);
 
       tutorialDao.changeMessage(tutorialData, event.getMessage());
@@ -54,9 +58,27 @@ public class AsyncPlayerChatListener implements Listener {
       player.sendMessage("§aDu hast die Daten erfolgreich geändert!");
       changePlayerListener.remove(player);
 
+      tutorialDao.reload();
+
     } else if (addPlayerListener.containsKey(player)) {
 
-      //TODO
+      event.setCancelled(true);
+
+      Tutorial tutorial = addPlayerListener.get(player);
+
+      if (tutorial.getType() == TutorialType.INGAME) {
+        tutorialDao.addTutorialData(tutorial.getName(),
+            new IngameData(tutorial.getData() == null ? 0 : tutorial.getData().size(),
+                event.getMessage(), player.getLocation()));
+        tutorialDao.reload();
+      } else {
+        tutorialDao.addTutorialData(tutorial.getName(),
+            new TextData(tutorial.getData() == null ? 0 : tutorial.getData().size(),
+                event.getMessage()));
+        tutorialDao.reload();
+      }
+
+      player.sendMessage("§aDu hast erfolgreich einen neuen Tutorial-Punkt erstellt!");
 
     }
 
